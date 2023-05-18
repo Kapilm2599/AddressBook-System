@@ -165,4 +165,12 @@ public class AddressBook {
 
 		}
 	}
+	
+	long getCountByState(String state) {
+		return personsState.values().stream().filter(prsnState -> prsnState.equals(state)).count();
+	}
+
+	long getCountByCity(String city) {
+		return personsCity.values().stream().filter(prsnCity -> prsnCity.equals(city)).count();
+	}
 }
