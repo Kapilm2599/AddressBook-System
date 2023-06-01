@@ -1,176 +1,140 @@
 package com.blz.addressbook;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Scanner;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class AddressBook {
-	
-	private Scanner scanner = new Scanner(System.in);
-	private String fname, lname, mail, address, city, state;
-	private int zip, i;
-	private long phone;
-	private ArrayList<ContactPerson> persons;
-	private int count;
-	private boolean checkEquality;
-	private HashMap<ContactPerson, String> personsState, personsCity;
+	 ArrayList<Contact> list = new ArrayList<Contact>();//// It represents a single diary where contact has been stored
+	    String bookName; /// It represent the name of diary
 
-	public AddressBook() {
+	    void addContact() {
+	        Contact contact = new Contact();
+	        contact.addContact();
+	        boolean duplicateContact = list.stream().anyMatch(x -> x.firstName.equals(contact.firstName));
+	        if (duplicateContact == true) {
+	            System.out.println("It is a duplicate contact.");
+	            return;
+	        } else {
+	            list.add(contact);
+	            System.out.println("Contact added successfully");
+	        }
 
-		persons = new ArrayList<>();
-		personsState = new HashMap<>();
-		personsCity = new HashMap<>();
-	}
+	    }
 
-	// Method input first and last name
-	private void inputNames() {
-		System.out.println("Enter first name: ");
-		fname = scanner.next();
-		System.out.println("Enter last name: ");
-		lname = scanner.next();
-	}
+	    void deletePerson(String name, ArrayList<Contact> list) {
+	        if (list.size() == 0) {
+	            System.out.println("Address book is empty.Please Add First");
+	        } else {
+	            int m = 0;
+	            for (int i = list.size() - 1; i >= 0; --i) {
+	                if (list.get(i).firstName.contains(name)) {
+	                    list.remove(i);
+	                    System.out.println("Contact deleted successfully");
+	                    m += 1;
+	                    break;
+	                }
+	            }
+	            if (m == 0) {
+	                System.out.println("No contact with the given name exist");
+	            }
+	        }
 
-	// method to get input contacts
-	private void inputContacts() {
-		System.out.println("Enter email: ");
-		mail = scanner.next();
-		scanner.nextLine();
-		System.out.println("Enter address: ");
-		address = scanner.nextLine();
-		System.out.println("Enter city: ");
-		city = scanner.next();
-		scanner.nextLine();
-		System.out.println("Enter state: ");
-		state = scanner.nextLine();
-		System.out.println("Enter postal(zip) code: ");
-		zip = scanner.nextInt();
-		System.out.println("Enter phone number: ");
-		phone = scanner.nextLong();
-	}
+	    }
 
-	/*
-	 * method of add person
-	 */
-	void addPerson() {
-		System.out.println("Enter Person " + (count + 1) + " Details:");
-		inputNames();
-		inputContacts();
-		ContactPerson person = new ContactPerson(fname, lname, mail, address, city, state, zip, phone);
+	    void editPerson(String name, ArrayList<Contact> list) {
+	        if (list.size() == 0) {
+	            System.out.println("Addressbook is empty.Please add First");
+	        } else {
+	            int m = 0;
+	            for (int i = list.size() - 1; i >= 0; --i) {
+	                if (list.get(i).firstName.contains(name)) {
+	                    list.get(i).addContact();
+	                    System.out.println("Contact Updated successfully");
+	                    m += 1;
+	                    break;
+	                }
+	            }
+	            if (m == 0) {
+	                System.out.println("No contact with the given name exist");
+	            }
+	        }
 
-		List<ContactPerson> duplicate = persons.stream().filter(prsn -> prsn.equals(person))
-				.collect(Collectors.toList());
+	    }
 
-		if (duplicate.toString().equals("[]")) {
-			count++;
-			persons.add(person);
-			personsState.put(person, state);
-			personsCity.put(person, city);
-		} else
-			System.out.println("Duplicate Name: Can't add person details!");
 
-	}
+	    public static void main(String[] args) {
 
-	private boolean areNamesEqual() {
-		for (i = 0; i < persons.size(); i++)
-			if (persons.get(i).getName().equals(fname + lname)) {
-				System.out.println("Match found at position " + i);
-				return true;
-			}
-		return false;
-	}
+	        System.out.println("Welcome to Address Book Program ");
 
-	void updatePerson() {
-		inputNames();
-		checkEquality = areNamesEqual();
-		if (checkEquality) {
-			personsState.remove(state);
-			personsCity.remove(city);
+	        AddressBookMain shelf = new AddressBookMain();
 
-			inputContacts();
-			ContactPerson person = new ContactPerson(fname, lname, mail, address, city, state, zip, phone);
-			persons.set(i, person);
+	        while (true) {
+	            AddressBook addressBook = new AddressBook();
+	            Scanner scan3 = new Scanner(System.in);
+	            System.out.println("Enter the name of Book you want to  access or add  or type 'city' to search persons by city or type 'state' to search by state or press 'q' to quit");
+	            String bookName = scan3.nextLine();
+	            if (bookName.equals("q")) {
+	                // if (addressBook.list.size() > 0) {
+	                // book.addBook(bookName, addressBook);
+	                // }
+	                System.out.println("The program is closed");
+	                break;
+	            }
+	            else if(bookName.equals("city")) {
+	                Scanner scan = new Scanner(System.in);
+	                System.out.println("Enter the name of city  :");
+	                String placeName = scan.nextLine();
+	                shelf.showPersonsByCity(placeName);
+	                continue;
+	            }
+	            else if(bookName.equals("state")) {
+	                Scanner scan = new Scanner(System.in);
+	                System.out.println("Enter the name of state  :");
+	                String placeName = scan.nextLine();
+	                shelf.showPersonsByState(placeName);
+	                continue;
+	            }
+	            int result = shelf.checkBook(bookName);//// (It can return 0 or 1)It will return 1 if book exist b and breakdown loop
+	            int condition = 0;///// It will keep check on the addressbook created or not
+	            while (true) {
+	                if (result == 1) {
+	                    break;
+	                }
+	                System.out
+	                        .println("Do you want to add/edit/delete/  the contacts (0/1/2) :Press 4 to see the sorted contacts Press 3 to Go back to main menu");
+	                Scanner scan = new Scanner(System.in);
+	                int input = scan.nextInt();
 
-			personsState.put(person, state);
-			personsState.put(person, city);
-			System.out.println("Person " + (i + 1) + " Contact updated successfully!");
-		} else
-			System.out.println("No match available!");
-	}
+	                if (input == 0) {
+	                    addressBook.addContact();
 
-	void deletePerson() {
-		inputNames();
-		checkEquality = areNamesEqual();
-		if (checkEquality) {
-			count--;
-			ContactPerson removedPerson = persons.remove(i);
-			personsState.remove(removedPerson);
-			personsCity.remove(removedPerson);
+	                } else if (input == 1) {
+	                    Scanner scan1 = new Scanner(System.in);
+	                    System.out.println("Enter the first name of person you to edit ");
+	                    String name = scan1.nextLine();
+	                    addressBook.editPerson(name, addressBook.list);
 
-			System.out.println("Person " + (i + 1) + " Contact removed successfully!");
-		} else
-			System.out.println("No match available!");
-	}
+	                } else if (input == 2) {
+	                    Scanner scan2 = new Scanner(System.in);
+	                    System.out.println("Enter the first name of the person you want to delete : ");
+	                    String name = scan2.nextLine();
+	                    addressBook.deletePerson(name, addressBook.list);
+	                }
 
-	public String toString() {
-		String personsData = "";
-		for (i = 0; i < count; i++) {
-			personsData += "Person " + (i + 1) + " Details:\n";
-			personsData += persons.get(i);
-		}
-		return personsData;
-	}
+	                else if (input == 3) {
+	                    shelf.addBook(bookName, addressBook);
+	                    break;
+	                }
+	                else if(input == 4 ) {
+	                    addressBook.list.sort((Contact x1, Contact x2)->x1.firstName.compareTo(x2.firstName));
+	                    addressBook.list.forEach((s)->System.out.println(s));
+	                }
 
-	void viewAddrBook(String... stateCity) {
-		String state = stateCity[0];
+	                else {
+	                    System.out.println("Enter the valid command");
+	                }
+	            }
+	        }
 
-		Predicate<ContactPerson> predicatePerson;
-
-		System.out.println("\n-------------------------------------------------------");
-
-		try {
-			System.out.println("State Name: " + stateCity[0]);
-			System.out.println("City Name: " + stateCity[1]);
-			String city = stateCity[1];
-
-			predicatePerson = person -> person.getState().equals(state) && person.getCity().equals(city);
-
-		} catch (ArrayIndexOutOfBoundsException aioobe) {
-			predicatePerson = person -> person.getState().equals(state);
-
-		}
-
-		persons.stream().filter(predicatePerson).forEach(prsn -> System.out.print("\n" + prsn + "\n"));
-	}
-
-	void viewPersons(String... stateCity) {
-		String state = stateCity[0];
-
-		System.out.println("\n-------------------------------------------------------");
-
-		try {
-			System.out.println("State Name: " + stateCity[0]);
-			System.out.println("City Name: " + stateCity[1]);
-			String city = stateCity[1];
-
-			personsCity.keySet().stream().filter(prsn -> city.equals(personsCity.get(prsn)))
-					.forEach(prsn -> System.out.print("\n" + prsn + "\n"));
-
-		} catch (ArrayIndexOutOfBoundsException aioobe) {
-
-			personsState.keySet().stream().filter(prsn -> state.equals(personsState.get(prsn)))
-					.forEach(prsn -> System.out.print("\n" + prsn + "\n"));
-
-		}
-	}
-	
-	long getCountByState(String state) {
-		return personsState.values().stream().filter(prsnState -> prsnState.equals(state)).count();
-	}
-
-	long getCountByCity(String city) {
-		return personsCity.values().stream().filter(prsnCity -> prsnCity.equals(city)).count();
-	}
+	    }
 }
